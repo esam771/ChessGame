@@ -76,6 +76,7 @@ public class mainChess {
 	public boolean legalMove(int[] numarr)
 	{
 		//not fully implemented yet
+		boolean legal = true;
 		
 		if((numarr[0] == numarr[2]) && (numarr[1]==numarr[3]))
 			return false; //can't move to same place
@@ -122,9 +123,9 @@ public class mainChess {
         	break;
         default: return true; 
         	}
+		*/
 	
 		return legal;
-		*/
 	}
 	
 	public void changePosition(int[] numarr)
