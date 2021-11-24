@@ -76,7 +76,6 @@ public class mainChess {
 	public boolean legalMove(int[] numarr)
 	{
 		//not fully implemented yet
-		boolean legal = true;
 		
 		if((numarr[0] == numarr[2]) && (numarr[1]==numarr[3]))
 			return false; //can't move to same place
@@ -93,6 +92,7 @@ public class mainChess {
 		//need logic for if pieces can move in certain way
 		
 		/*
+		boolean legal = true;
 		String type = board[numarr[1]][numarr[0]].pieceType();
 		int x1 = numarr[0];
 		int y1 = numarr[1];
@@ -122,9 +122,9 @@ public class mainChess {
         	break;
         default: return true; 
         	}
-		*/
 	
 		return legal;
+		*/
 	}
 	
 	public void changePosition(int[] numarr)
