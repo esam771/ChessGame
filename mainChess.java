@@ -38,6 +38,7 @@ public class mainChess {
 	public void processMove(String a)
 	{
 		//evaluates string input for each move
+		
 		if(a.compareTo("end") == 0) //when ending game
 			{
 			scan.close();
@@ -46,43 +47,101 @@ public class mainChess {
 		else
 			{
 			//requires method "changePosition()"
-			String[] arr = a.split("");	
-			int[] numarr = new int[4];
-	
-			numarr[0] = numValue(arr[0]);
-			numarr[1] = Integer.parseInt(arr[1]);
-			numarr[2] = numValue(arr[3]);
-			numarr[3] = Integer.parseInt(arr[4]);
 			
-			boolean valid = true;
-			for(int i = 0; i < numarr.length; i++)
+				String[] arr = a.split("");	
+				int[] numarr = new int[4];
+				boolean valid = true;
+				
+			try //catches improper inputs
 			{
-				if((numarr[i] > 8) || (numarr[i] < 1))
-				{
-					valid = false;
-				}
+		
+				numarr[0] = numValue(arr[0]);
+				numarr[1] = Integer.parseInt(arr[1]);
+				numarr[2] = numValue(arr[3]);
+				numarr[3] = Integer.parseInt(arr[4]);
+			
+			} catch(Exception e) { 
+				valid = false; //designates input as invalid
 			}
 			
-			if(!valid)
-				System.out.println("not valid");
-			else
-				changePosition(numarr);
+			
+			if((!valid) || (!legalMove(numarr))) //if off board or illegal
+				System.out.println("not a valid input, try again\n");
+			else 
+				changePosition(numarr); //moves piece if valid input
+			
 		}
+	}
+	
+	public boolean legalMove(int[] numarr)
+	{
+		//not fully implemented yet
+		boolean legal = true;
+		
+		if((numarr[0] == numarr[2]) && (numarr[1]==numarr[3]))
+			return false; //can't move to same place
+		
+		for(int i = 0; i < numarr.length; i++) //if move would be off board
+		{
+			if((numarr[i] > 8) || (numarr[i] < 1))
+			{
+				return false; //no need to search all if any coord is illegal
+			}
+		}
+		
+		/////////////////////////////////////////
+		//need logic for if pieces can move in certain way
+		
+		/*
+		String type = board[numarr[1]][numarr[0]].pieceType();
+		int x1 = numarr[0];
+		int y1 = numarr[1];
+		int x2 = numarr[2];
+		int y2 = numarr[3];
+		
+		switch(type) {
+        case "r": //rook
+        	//only false if both coords change
+        	 if((x2-x1 != 0) && (y2-y1 != 0))
+        	 	legal = false;
+        	break;
+        case "k": //knight
+        	
+        	break;
+        case "b": //bishop
+        	
+        	break;
+        case "q": //queen
+        	
+        	break;
+        case "K": //king
+        	
+        	break;
+        case "p": //pawn
+        	
+        	break;
+        default: return true; 
+        	}
+		*/
+	
+		return legal;
 	}
 	
 	public void changePosition(int[] numarr)
 	{
 		//moves pieces based on input from processMove()
-		int i1 = numarr[1];
-		int j1 = numarr[0];
+		turn++;
+		int i1 = numarr[1]; //x1, reversed because 2d array is y, x
+		int j1 = numarr[0]; //y1
 		
-		int i2 = numarr[3];
-		int j2 = numarr[2];
+		int i2 = numarr[3]; //x2
+		int j2 = numarr[2]; //y2
 		
 		board[Math.abs(i2-8) + 1][j2] = new Piece(board[Math.abs(i1-8) + 1]
-				[j1].isWhite(), board[Math.abs(i1-8) + 1][j1].pieceType());
+				[j1].isWhite(), board[Math.abs(i1-8) + 1][j1].pieceType(), 
+				board[Math.abs(i1-8) + 1][j1].pieceColor()); //moving piece
 		
-		board[Math.abs(i1-8) + 1][j1] = null;
+		board[Math.abs(i1-8) + 1][j1] = null; //removing old place
 	}
 	
 	public void printMove()
@@ -96,7 +155,6 @@ public class mainChess {
 		else
 			System.out.print(" Black's turn\n");
 	
-		turn++;
 		printBoard(); //outputs board
 	}
 	
@@ -110,7 +168,7 @@ public class mainChess {
 			for(int j = 0; j <= 10; j++)
 			{
 				if(board[i][j] != null)
-					System.out.print(board[i][j].pieceType() + " ");
+					System.out.print(board[i][j].pieceColor() + board[i][j].pieceType() + " ");
 				else if(i == 0 || ( j == 0) || (i == 9) || (j == 9))
 					System.out.print("  "); //formats blank area
 				else if((i == 10) && (j != 10))
@@ -153,34 +211,34 @@ public class mainChess {
 	{
 		//generates Piece variables on 2d array, only used once
 		//order: boolean white, string type
-		board[8][1] = new Piece(true, "wr"); //white rooks
-		board[8][8] = new Piece(true, "wr");
+		board[8][1] = new Piece(true, "r", "w"); //white rooks
+		board[8][8] = new Piece(true, "r", "w");
 		
-		board[8][2] = new Piece(true, "wk"); //white knights
-		board[8][7] = new Piece(true, "wk");
+		board[8][2] = new Piece(true, "k", "w"); //white knights
+		board[8][7] = new Piece(true, "k", "w");
 		
-		board[8][3] = new Piece(true, "wb"); //white bishops
-		board[8][6] = new Piece(true, "wb");
+		board[8][3] = new Piece(true, "b", "w"); //white bishops
+		board[8][6] = new Piece(true, "b", "w");
 		
-		board[8][4] = new Piece(true, "wq"); //white queen
-		board[8][5] = new Piece(true, "wK"); //white king
+		board[8][4] = new Piece(true, "q", "w"); //white queen
+		board[8][5] = new Piece(true, "K", "w"); //white king
 		
 		for(int i = 1; i <= 8; i++) //white pawns
-			board[7][i] = new Piece(true, "wp");
+			board[7][i] = new Piece(true, "p", "w");
 
-		board[1][1] = new Piece(true, "br"); //black rooks
-		board[1][8] = new Piece(false, "br");
+		board[1][1] = new Piece(true, "r", "b"); //black rooks
+		board[1][8] = new Piece(false, "r", "b");
 		
-		board[1][2] = new Piece(false, "bk"); //black knights
-		board[1][7] = new Piece(false, "bk");
+		board[1][2] = new Piece(false, "k", "b"); //black knights
+		board[1][7] = new Piece(false, "k", "b");
 		
-		board[1][3] = new Piece(false, "bb"); //black bishops
-		board[1][6] = new Piece(false, "bb");
+		board[1][3] = new Piece(false, "b", "b"); //black bishops
+		board[1][6] = new Piece(false, "b", "b");
 		
-		board[1][4] = new Piece(false, "bq"); //black queen
-		board[1][5] = new Piece(false, "bK"); //black king
+		board[1][4] = new Piece(false, "q", "b"); //black queen
+		board[1][5] = new Piece(false, "K", "b"); //black king
 		
 		for(int i = 1; i <= 8; i++) //black pawns
-			board[2][i] = new Piece(false, "bp");
+			board[2][i] = new Piece(false, "p", "b");
 	}
 }
