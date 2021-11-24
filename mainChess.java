@@ -25,7 +25,7 @@ public class mainChess {
 		//main move loop for game
 		System.out.println();
 		printMove();
-		String move = "e2 e5"; //getting input from static method
+		String move = ""; //getting input from static method
 		
 		while(move.compareTo("end") != 0) //ends if end is typed
 		{
@@ -44,33 +44,35 @@ public class mainChess {
 			scan.close();
 			System.exit(0);
 			}
-		else
-			{
-			//requires method "changePosition()"
-			
-				String[] arr = a.split("");	
-				int[] numarr = new int[4];
-				boolean valid = true;
-				
-			try //catches improper inputs
-			{
+
+		//requires method "changePosition()"
 		
-				numarr[0] = numValue(arr[0]);
-				numarr[1] = Integer.parseInt(arr[1]);
-				numarr[2] = numValue(arr[3]);
-				numarr[3] = Integer.parseInt(arr[4]);
+		String[] arr = a.split("");	//splitting input
+		int[] numarr = new int[4]; //coordinate array
+		boolean valid = true; //if move can be made
+		
+		///////////////	
 			
-			} catch(Exception e) { 
-				valid = false; //designates input as invalid
-			}
-			
-			
-			if((!valid) || (!legalMove(numarr))) //if off board or illegal
-				System.out.println("not a valid input, try again\n");
-			else 
-				changePosition(numarr); //moves piece if valid input
-			
+		try { //catches improper inputs
+			numarr[0] = numValue(arr[0]);
+			numarr[1] = Integer.parseInt(arr[1]);
+			numarr[2] = numValue(arr[3]);
+			numarr[3] = Integer.parseInt(arr[4]);
+		} catch(Exception e) { 
+			valid = false; //designates input as invalid
 		}
+		
+		////////////
+		
+		if(board[Math.abs(numarr[1]-8) + 1][numarr[0]] == null)
+			valid = false; //if trying to move from null spot
+		
+		////////////
+		
+		if((valid) && (legalMove(numarr))) //if on board and legal
+			changePosition(numarr);
+		else 
+			System.out.println("not a valid input, try again\n"); 
 	}
 	
 	public boolean legalMove(int[] numarr)
@@ -81,11 +83,11 @@ public class mainChess {
 		if((numarr[0] == numarr[2]) && (numarr[1]==numarr[3]))
 			return false; //can't move to same place
 		
-		for(int i = 0; i < numarr.length; i++) //if move would be off board
+		for(int i = 0; i < numarr.length; i++)
 		{
 			if((numarr[i] > 8) || (numarr[i] < 1))
 			{
-				return false; //no need to search all if any coord is illegal
+				return false; //if move would be off board
 			}
 		}
 		
