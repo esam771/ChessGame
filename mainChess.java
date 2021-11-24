@@ -8,13 +8,11 @@ public class mainChess {
 	 * game works by entering piece you want to move,
 	 * then entering place you want to move it, eg. "e2 e4"
 	 * 
-	 * currently doesn't check if moves are legal or not, 
-	 * but won't let you move pieces off the 8x8 board
+	 * types of piece movements allowed are currently not processed
 	 * 
 	 * if incorrect move is made, just use opponents turn 
 	 * to put it back and then redo original move
 	 */
-	
 	
 	public Piece[][] board = new Piece[11][11];
 	public int turn = 1;
