@@ -56,14 +56,13 @@ public class mainChess {
 			numarr[1] = Integer.parseInt(arr[1]);
 			numarr[2] = numValue(arr[3]);
 			numarr[3] = Integer.parseInt(arr[4]);
+			
+			if(board[Math.abs(numarr[1]-8) + 1][numarr[0]] == null)
+				valid = false; //if trying to move from null spot
+			
 		} catch(Exception e) { 
 			valid = false; //designates input as invalid
 		}
-		
-		////////////
-		
-		if(board[Math.abs(numarr[1]-8) + 1][numarr[0]] == null)
-			valid = false; //if trying to move from null spot
 		
 		////////////
 		
@@ -148,13 +147,15 @@ public class mainChess {
 	public void printMove()
 	{
 		//prints current turn and board, requires method "printBoard()"
-		System.out.println("move format: (a1 b2) or (end) to end");
-		System.out.print("Turn: " + turn);
+		System.out.println(" move format: (a1 b2) or (end) to end");
+		System.out.print(" Turn: " + turn);
 		
 		if(turn % 2 == 1)
-			System.out.print(" White's turn\n");
+			System.out.print(", White's turn\n");
 		else
-			System.out.print(" Black's turn\n");
+			System.out.print(", Black's turn\n");
+		
+		System.out.print(" -------------------------");
 	
 		printBoard(); //outputs board
 	}
@@ -162,26 +163,49 @@ public class mainChess {
 	public void printBoard()
 	{
 		//only prints contents of 2d array
-		String[] letters = {"a","b","c","d","e","f","g","h"};
+		String[] letters = {"a","b","c","d","e","f","g","h","",""};
 		
-		for(int i = 0; i <= 10; i++)
+		for(int i = 0; i <= 9; i++)
 		{
+			System.out.print(" ");
 			for(int j = 0; j <= 10; j++)
 			{
 				if(board[i][j] != null)
-					System.out.print(board[i][j].pieceColor() + board[i][j].pieceType() + " ");
-				else if(i == 0 || ( j == 0) || (i == 9) || (j == 9))
-					System.out.print("  "); //formats blank area
-				else if((i == 10) && (j != 10))
+					System.out.print(board[i][j].pieceColor() + board[i][j].pieceType() + "|");
+				
+				else if(i == 0)
+						System.out.print("");
+
+				else if((i == 10) && (j == 0))
+					System.out.print(" ");
+				
+				else if((i == 9) && (j == 0))
+					System.out.print(" ");
+				
+				else if((i == 0) || ( j == 0))
+					System.out.print("|"); //formats blank area
+				
+				else if((j == 9))
+					System.out.print(""); //formats blank area
+				
+				else if((i == 9))
 					System.out.print(letters[j-1] + "  "); //prints columns
+				
 				else if((j == 10) && (i != 10))
-					System.out.print((9-i)); //prints edge nums
+				{
+					System.out.print(" " + (9-i)); //prints edge nums
+					System.out.print("\n -------------------------");
+				}
+				
+				else if((j == 10) && (i == 10))
+					System.out.print("");
+				
 				else
-					System.out.print("   ");
+					System.out.print("  |");
 			}
-			System.out.println();
+			System.out.println("");
 		}
-		System.out.println("\n**************************");
+		System.out.println("____________________________");
 	}
 
 	public int numValue(String str)
