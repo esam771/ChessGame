@@ -10,13 +10,14 @@ public class mainChess {
 	 * 
 	 * types of piece movements allowed are currently not processed
 	 * 
-	 * if incorrect move is made, just use opponents turn 
-	 * to put it back and then redo original move
+	 * if incorrect move is made, can type "undo"
+	 * type "end" to close game
 	 */
 	
 	public Piece[][] board = new Piece[11][11];
 	public int turn = 1;
 	static Scanner scan = new Scanner(System.in);
+	public int[] lastMove = new int[4]; //if ever want to undo
 	
 	public void playGame()
 	{
@@ -42,12 +43,17 @@ public class mainChess {
 			scan.close();
 			System.exit(0);
 			}
+		else if(a.compareTo("undo") == 0)
+			undoMove();
+		else
+		{
 
 		//requires method "changePosition()"
 		
 		String[] arr = a.split("");	//splitting input
 		int[] numarr = new int[4]; //coordinate array
 		boolean valid = true; //if move can be made
+		String output = "";
 		
 		///////////////	
 			
@@ -58,38 +64,63 @@ public class mainChess {
 			numarr[3] = Integer.parseInt(arr[4]);
 			
 			if(board[Math.abs(numarr[1]-8) + 1][numarr[0]] == null)
+			{
 				valid = false; //if trying to move from null spot
+				output = "can't move from empty spot";
+			}
 			
 		} catch(Exception e) { 
 			valid = false; //designates input as invalid
+			output = "input format incorrect";
 		}
 		
-		////////////
+
+		if(valid && output.compareTo("") == 0) //required because of try catch
+			output = legalMove(numarr); 
 		
-		if((valid) && (legalMove(numarr))) //if on board and legal
+		if(valid && output.compareTo("") == 0) //if on board and legal
 			changePosition(numarr);
 		else 
-			System.out.println("not a valid input, try again\n"); 
+			System.out.println(output + ", try again\n"); 
+		}
 	}
 	
-	public boolean legalMove(int[] numarr)
+	public String legalMove(int[] numarr)
 	{
 		//not fully implemented yet
-		boolean legal = true;
+		String output = "";
 		
-		if((numarr[0] == numarr[2]) && (numarr[1]==numarr[3]))
-			return false; //can't move to same place
+		int x1 = Math.abs(numarr[1]-8) + 1;
+		int y1 = numarr[0];
+		int x2 = Math.abs(numarr[3]-8) + 1;
+		int y2 = numarr[2];
+		
+		////////////////////////////////////////
+		
+		if((x1 == x2) && (y1 == y2))
+			return "cant move to same place"; //can't move to same place
 		
 		for(int i = 0; i < numarr.length; i++)
 		{
 			if((numarr[i] > 8) || (numarr[i] < 1))
 			{
-				return false; //if move would be off board
+				return "can't move off board"; //if move would be off board
 			}
 		}
+
+		if(board[x2][y2] != null) //can't capture on same color
+			if((board[x1][y1].isWhite() == board[x2][y2].isWhite()))
+				return "can't capture on same color";
+		
+		/*
+		 * color movement is not turn specific,
+		 * allows people to use other players turn to 
+		 * undo, need to implement undo method first
+		 * 
+		 */
 		
 		/////////////////////////////////////////
-		//need logic for if pieces can move in certain way
+		//need logic for specific pieces 
 		
 		/*
 		boolean legal = true;
@@ -124,13 +155,16 @@ public class mainChess {
         	}
 		*/
 	
-		return legal;
+		return output;
 	}
 	
 	public void changePosition(int[] numarr)
 	{
 		//moves pieces based on input from processMove()
 		turn++;
+		lastMove[0] = numarr[0]; lastMove[1] = numarr[1]; 
+		lastMove[2] = numarr[2]; lastMove[3] = numarr[3]; 
+		
 		int i1 = numarr[1]; //x1, reversed because 2d array is y, x
 		int j1 = numarr[0]; //y1
 		
@@ -142,6 +176,20 @@ public class mainChess {
 				board[Math.abs(i1-8) + 1][j1].pieceColor()); //moving piece
 		
 		board[Math.abs(i1-8) + 1][j1] = null; //removing old place
+	}
+	
+	public void undoMove()
+	{
+		turn -= 2;
+		
+		int[] numarr = new int[4];
+		numarr[0] = lastMove[2];
+		numarr[1] = lastMove[3];
+		numarr[2] = lastMove[0];
+		numarr[3] = lastMove[1]; //reverses last stored move
+
+		changePosition(numarr); //moves based on inverse of stored
+		
 	}
 	
 	public void printMove()
@@ -205,7 +253,7 @@ public class mainChess {
 			}
 			System.out.println("");
 		}
-		System.out.println("____________________________");
+		System.out.println("_____________________________");
 	}
 
 	public int numValue(String str)
