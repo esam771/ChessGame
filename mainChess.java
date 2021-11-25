@@ -111,14 +111,7 @@ public class mainChess {
 		if(board[x2][y2] != null) //can't capture on same color
 			if((board[x1][y1].isWhite() == board[x2][y2].isWhite()))
 				return "can't capture on same color";
-		
-		/*
-		 * color movement is not turn specific,
-		 * allows people to use other players turn to 
-		 * undo, need to implement undo method first
-		 * 
-		 */
-		
+				
 		/////////////////////////////////////////
 		//need logic for specific pieces 
 		
