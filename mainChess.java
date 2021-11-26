@@ -35,13 +35,8 @@ public class mainChess {
 	public void processMove(String a)
 	{
 		//evaluates string input for each move
-		
-		if(a.compareTo("end") == 0) //when ending game
-			{
-			scan.close();
-			System.exit(0);
-			}
-		else if(a.compareTo("undo") == 0)
+
+		if(a.compareTo("undo") == 0)
 			undoMove();
 		else if(a.compareTo("rules") == 0)
 			printRules();
