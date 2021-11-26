@@ -4,17 +4,15 @@ import java.util.*;
 
 public class mainChess {
 	
-	/*
-	 * game works by entering piece you want to move,
-	 * then entering place you want to move it, eg. "e2 e4"
+	/* 
+	 * "rules" to see input format and possible commands
 	 * 
-	 * types of piece movements allowed are currently not processed
-	 * 
-	 * if incorrect move is made, can type "undo"
-	 * type "end" to close game
+	 * things left to do
+	 * -can't exchange pawns for other pieces
+	 * -can still move through pieces
 	 */
 	
-	public Piece[][] board = new Piece[11][11];
+	public Piece[][] board = new Piece[10][11];
 	public int turn = 1;
 	static Scanner scan = new Scanner(System.in);
 	public int[] lastMove = new int[4]; //if ever want to undo
@@ -45,43 +43,39 @@ public class mainChess {
 			}
 		else if(a.compareTo("undo") == 0)
 			undoMove();
+		else if(a.compareTo("rules") == 0)
+			printRules();
 		else
 		{
-
 		//requires method "changePosition()"
-		
-		String[] arr = a.split("");	//splitting input
-		int[] numarr = new int[4]; //coordinate array
-		boolean valid = true; //if move can be made
-		String output = "";
-		
-		///////////////	
-			
-		try { //catches improper inputs
-			numarr[0] = numValue(arr[0]);
-			numarr[1] = Integer.parseInt(arr[1]);
-			numarr[2] = numValue(arr[3]);
-			numarr[3] = Integer.parseInt(arr[4]);
-			
-			if(board[Math.abs(numarr[1]-8) + 1][numarr[0]] == null)
-			{
-				valid = false; //if trying to move from null spot
-				output = "can't move from empty spot";
+			String[] arr = a.split("");	//splitting input
+			int[] numarr = new int[4]; //coordinate array
+			boolean valid = true; //if move can be made
+			String output = "";
+				
+			try { //catches improper inputs
+				numarr[0] = numValue(arr[0]);
+				numarr[1] = Integer.parseInt(arr[1]);
+				numarr[2] = numValue(arr[3]);
+				numarr[3] = Integer.parseInt(arr[4]);
+				
+				if(board[Math.abs(numarr[1]-8) + 1][numarr[0]] == null)
+				{
+					valid = false; //if trying to move from null spot
+					output = "can't move from empty spot";
+				}
+			} catch(Exception e) { 
+				valid = false; //designates input as invalid
+				output = "input format incorrect";
 			}
 			
-		} catch(Exception e) { 
-			valid = false; //designates input as invalid
-			output = "input format incorrect";
-		}
-		
-
-		if(valid && output.compareTo("") == 0) //required because of try catch
-			output = legalMove(numarr); 
-		
-		if(valid && output.compareTo("") == 0) //if on board and legal
-			changePosition(numarr);
-		else 
-			System.out.println(output + ", try again\n"); 
+			if(valid && output.compareTo("") == 0) //required because of try catch
+				output = legalMove(numarr); 
+			
+			if(valid && output.compareTo("") == 0) //if on board and legal
+				changePosition(numarr);
+			else 
+				System.out.println(output + ", try again\n"); 
 		}
 	}
 	
@@ -90,15 +84,13 @@ public class mainChess {
 		//not fully implemented yet
 		String output = "";
 		
-		int x1 = Math.abs(numarr[1]-8) + 1;
+		int x1 = Math.abs(numarr[1]-8) + 1; //converting to normal coord system
 		int y1 = numarr[0];
 		int x2 = Math.abs(numarr[3]-8) + 1;
 		int y2 = numarr[2];
 		
-		////////////////////////////////////////
-		
 		if((x1 == x2) && (y1 == y2))
-			return "cant move to same place"; //can't move to same place
+			return "cant move to same place"; //if moving to same place
 		
 		for(int i = 0; i < numarr.length; i++)
 		{
@@ -108,46 +100,58 @@ public class mainChess {
 			}
 		}
 
-		if(board[x2][y2] != null) //can't capture on same color
+		if(board[x2][y2] != null) //if trying to capture on same color
 			if((board[x1][y1].isWhite() == board[x2][y2].isWhite()))
 				return "can't capture on same color";
-				
-		/////////////////////////////////////////
-		//need logic for specific pieces 
 		
-		/*
-		boolean legal = true;
-		String type = board[numarr[1]][numarr[0]].pieceType();
-		int x1 = numarr[0];
-		int y1 = numarr[1];
-		int x2 = numarr[2];
-		int y2 = numarr[3];
+		//
+		// color movement is not currently turn specific
+		//
 		
-		switch(type) {
-        case "r": //rook
-        	//only false if both coords change
-        	 if((x2-x1 != 0) && (y2-y1 != 0))
-        	 	legal = false;
-        	break;
-        case "k": //knight
-        	
-        	break;
-        case "b": //bishop
-        	
-        	break;
-        case "q": //queen
-        	
-        	break;
-        case "K": //king
-        	
-        	break;
-        case "p": //pawn
-        	
-        	break;
-        default: return true; 
-        	}
-		*/
-	
+		String type = board[x1][y1].pieceType();
+		int x = Math.abs(x2-x1);
+		int y = Math.abs(y2-y1);
+		
+		switch(type) { //logic for specific pieces
+		
+	        case "r": //rook
+	        	 if(x != 0 && y != 0)
+	        	 	output = "can't move a rook look that";
+	        	break;
+	        	
+	        case "k": //knight
+	        	if(x == 1)
+	        		if(y != 2)
+	        			output = "can't move a knight like that";
+	        	else if(x == 2)
+	        		if(y != 1)
+	        			output = "can't move a knight like that";
+	        	else
+	        		output = "can't move a knight like that";
+	        	break;
+	        	
+	        case "b": //bishop
+	        	if(x != y)
+	        		output = "can't move a bishop non-diagonally";
+	        	break;
+	        	
+	        case "q": //queen
+	        	if(x != y && x != 0 && y != 0)
+	        		output = "can't move a queen like that";
+	        	break;
+	        	
+	        case "K": //king
+	        	if(x > 1 || y > 1)
+	        		output = "can't move a king that far";
+	        	break;
+	        	
+	        case "p": //pawn
+	        	if(x + y > 2)
+	        		output = "can't move a pawn that far";
+	        	break;
+	        	
+	        default: output = ""; }
+		
 		return output;
 	}
 	
@@ -158,46 +162,54 @@ public class mainChess {
 		lastMove[0] = numarr[0]; lastMove[1] = numarr[1]; 
 		lastMove[2] = numarr[2]; lastMove[3] = numarr[3]; 
 		
-		int i1 = numarr[1]; //x1, reversed because 2d array is y, x
-		int j1 = numarr[0]; //y1
+		int x1 = Math.abs(numarr[1]-8) + 1; //converting to normal coord system
+		int y1 = numarr[0];
+		int x2 = Math.abs(numarr[3]-8) + 1;
+		int y2 = numarr[2];
 		
-		int i2 = numarr[3]; //x2
-		int j2 = numarr[2]; //y2
+		board[x2][y2] = new Piece(board[x1][y1].isWhite(), 
+				board[x1][y1].pieceType(), 
+				board[x1][y1].pieceColor()); //moving piece
 		
-		board[Math.abs(i2-8) + 1][j2] = new Piece(board[Math.abs(i1-8) + 1]
-				[j1].isWhite(), board[Math.abs(i1-8) + 1][j1].pieceType(), 
-				board[Math.abs(i1-8) + 1][j1].pieceColor()); //moving piece
-		
-		board[Math.abs(i1-8) + 1][j1] = null; //removing old place
+		board[x1][y1] = null; //removing old place
 	}
 	
 	public void undoMove()
 	{
-		turn -= 2;
-		
-		int[] numarr = new int[4];
-		numarr[0] = lastMove[2];
-		numarr[1] = lastMove[3];
-		numarr[2] = lastMove[0];
-		numarr[3] = lastMove[1]; //reverses last stored move
-
-		changePosition(numarr); //moves based on inverse of stored
-		
+		if (turn > 1)
+		{
+			turn -= 2;
+			int[] numarr = new int[4];
+			numarr[0] = lastMove[2];
+			numarr[1] = lastMove[3];
+			numarr[2] = lastMove[0];
+			numarr[3] = lastMove[1]; //reverses last stored move
+			changePosition(numarr); //moves based on inverse of stored
+		}
+		else {
+			System.out.println("cannot undo without moving first");
+		}
+	}
+	
+	public void printRules()
+	{
+		System.out.println(" Movement format: e2 e4");
+		System.out.println(" (undo) to undo move");
+		System.out.println(" (end) to close program");
 	}
 	
 	public void printMove()
 	{
 		//prints current turn and board, requires method "printBoard()"
-		System.out.println(" move format: (a1 b2) or (end) to end");
+		System.out.println();
 		System.out.print(" Turn: " + turn);
 		
 		if(turn % 2 == 1)
-			System.out.print(", White's turn\n");
+			System.out.print(", White's turn\n\n");
 		else
-			System.out.print(", Black's turn\n");
+			System.out.print(", Black's turn\n\n");
 		
 		System.out.print(" -------------------------");
-	
 		printBoard(); //outputs board
 	}
 	
@@ -261,14 +273,14 @@ public class mainChess {
             case "e": i = 5; break;
             case "f": i = 6; break;
             case "g": i = 7; break;
-            case "h": i = 8; break; //backwards to work with board
+            case "h": i = 8; break;
             default: i = -1; }
         return i;
 	}
 	
 	public static String takeMove()
 	{
-		//used with global scanner to accept input
+		//used with global scanner to accept string input
 		String ans = scan.nextLine();
 		return ans;
 	}
@@ -276,16 +288,12 @@ public class mainChess {
 	public void generateBoard()
 	{
 		//generates Piece variables on 2d array, only used once
-		//order: boolean white, string type
 		board[8][1] = new Piece(true, "r", "w"); //white rooks
 		board[8][8] = new Piece(true, "r", "w");
-		
 		board[8][2] = new Piece(true, "k", "w"); //white knights
 		board[8][7] = new Piece(true, "k", "w");
-		
 		board[8][3] = new Piece(true, "b", "w"); //white bishops
 		board[8][6] = new Piece(true, "b", "w");
-		
 		board[8][4] = new Piece(true, "q", "w"); //white queen
 		board[8][5] = new Piece(true, "K", "w"); //white king
 		
@@ -294,13 +302,10 @@ public class mainChess {
 
 		board[1][1] = new Piece(true, "r", "b"); //black rooks
 		board[1][8] = new Piece(false, "r", "b");
-		
 		board[1][2] = new Piece(false, "k", "b"); //black knights
 		board[1][7] = new Piece(false, "k", "b");
-		
 		board[1][3] = new Piece(false, "b", "b"); //black bishops
 		board[1][6] = new Piece(false, "b", "b");
-		
 		board[1][4] = new Piece(false, "q", "b"); //black queen
 		board[1][5] = new Piece(false, "K", "b"); //black king
 		
