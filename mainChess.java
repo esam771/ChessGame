@@ -23,12 +23,13 @@ public class mainChess {
 		System.out.println();
 		printMove();
 		String move = ""; //getting input from static method
+		move = mainChess.takeMove();
 		
 		while(move.compareTo("end") != 0) //ends if end is typed
 		{
-			move = mainChess.takeMove();
 			processMove(move); //changes board based on move input
 			printMove();
+			move = mainChess.takeMove();
 		}
 	}
 	
@@ -42,7 +43,6 @@ public class mainChess {
 			printRules();
 		else
 		{
-		//requires method "changePosition()"
 			String[] arr = a.split("");	//splitting input
 			int[] numarr = new int[4]; //coordinate array
 			boolean valid = true; //if move can be made
@@ -76,7 +76,6 @@ public class mainChess {
 	
 	public String legalMove(int[] numarr)
 	{
-		//not fully implemented yet
 		String output = "";
 		
 		int x1 = Math.abs(numarr[1]-8) + 1; //converting to normal coord system
