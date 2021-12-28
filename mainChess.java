@@ -83,28 +83,22 @@ public class mainChess {
 		int x2 = Math.abs(numarr[3]-8) + 1;
 		int y2 = numarr[2];
 		
-		if((x1 == x2) && (y1 == y2))
+		String type = board[x1][y1].pieceType();
+		int x = Math.abs(x2-x1);
+		int y = Math.abs(y2-y1);
+		
+		if(x + y == 0)
 			return "cant move to same place"; //if moving to same place
 		
-		for(int i = 0; i < numarr.length; i++)
-		{
+		for(int i = 0; i < numarr.length; i++) 
 			if((numarr[i] > 8) || (numarr[i] < 1))
-			{
-				return "can't move off board"; //if move would be off board
-			}
-		}
+				return "can't move off board"; //if move would be off board}
 
 		if(board[x2][y2] != null) //if trying to capture on same color
 			if((board[x1][y1].isWhite() == board[x2][y2].isWhite()))
 				return "can't capture on same color";
 		
-		//
 		// color movement is not currently turn specific
-		//
-		
-		String type = board[x1][y1].pieceType();
-		int x = Math.abs(x2-x1);
-		int y = Math.abs(y2-y1);
 		
 		switch(type) { //logic for specific pieces
 		
@@ -162,8 +156,8 @@ public class mainChess {
 		int y2 = numarr[2];
 		
 		board[x2][y2] = new Piece(board[x1][y1].isWhite(), 
-				board[x1][y1].pieceType(), 
-				board[x1][y1].pieceColor()); //moving piece
+			board[x1][y1].pieceType(), 
+			board[x1][y1].pieceColor()); //moving piece
 		
 		board[x1][y1] = null; //removing old place
 	}
@@ -272,12 +266,11 @@ public class mainChess {
         return i;
 	}
 	
-	public static String takeMove()
-	{
+	public static String takeMove() {
 		//used with global scanner to accept string input
 		String ans = scan.nextLine();
-		return ans;
-	}
+		return ans; 
+		}
 
 	public void generateBoard()
 	{
