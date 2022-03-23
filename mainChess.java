@@ -101,7 +101,6 @@ public class mainChess {
 		// color movement is not currently turn specific
 		
 		switch(type) { //logic for specific pieces
-		
 	        case "r": //rook
 	        	 if(x != 0 && y != 0)
 	        	 	output = "can't move a rook look that";
@@ -226,10 +225,10 @@ public class mainChess {
 				else if((i == 0) || ( j == 0))
 					System.out.print("|"); //formats blank area
 				
-				else if((j == 9))
+				else if(j == 9)
 					System.out.print(""); //formats blank area
 				
-				else if((i == 9))
+				else if(i == 9)
 					System.out.print(letters[j-1] + "  "); //prints columns
 				
 				else if((j == 10) && (i != 10))
@@ -238,7 +237,7 @@ public class mainChess {
 					System.out.print("\n -------------------------");
 				}
 				
-				else if((j == 10) && (i == 10))
+				else if(i + j == 20)
 					System.out.print("");
 				
 				else
